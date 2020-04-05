@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Test</string>
+    <string name="top_text">Concentration Game</string>
+    <string name="bottom_text">Flips : 0</string>
+</resources>
