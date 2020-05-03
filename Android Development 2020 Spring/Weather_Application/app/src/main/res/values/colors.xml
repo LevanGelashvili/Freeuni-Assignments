@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <color name="day_start">#f63e6a</color>
+    <color name="day_end">#f9c862</color>
+    <color name="night_start">#06377c</color>
+    <color name="night_end">#59aaec</color>
+
+    <color name="day_yellow">#F8E71D</color>
+    <color name="night_blue">#395f8c</color>
+
+</resources>

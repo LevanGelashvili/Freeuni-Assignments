@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Weather Application</string>
+    <integer name="gradient_angle">0</integer>
+</resources>
