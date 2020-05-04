@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF">
+    android:background="@drawable/rounded_shape">
 
     <TextView
         android:id="@+id/cell_time"
@@ -13,6 +13,7 @@
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
         android:text="0:00pm"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/cell_icon"
         app:layout_constraintEnd_toStartOf="@+id/cell_icon"
         app:layout_constraintHorizontal_bias="0.5"
@@ -26,6 +27,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
         android:text="7°C"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/cell_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -34,8 +36,10 @@
 
     <ImageView
         android:id="@+id/cell_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cell_temp"
         app:layout_constraintHorizontal_bias="0.5"

@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.ViewPager
-import retrofit2.Call
 import com.example.weather_application.Models.Country
 import com.example.weather_application.networking.CountryClient
+import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
@@ -25,11 +25,18 @@ class MainActivity : FragmentActivity() {
         val call: Call<List<Country>> = CountryClient.getClient.getCountryList()
         call.enqueue(object : Callback<List<Country>> {
 
-            override fun onResponse(call: Call<List<Country>>?, response: Response<List<Country>>?) {
+            override fun onResponse(
+                call: Call<List<Country>>?,
+                response: Response<List<Country>>?
+            ) {
                 if (response!!.isSuccessful) {
                     initSuccessfulResponse(response)
                 } else {
-                    Toast.makeText(this@MainActivity, "Could not retrieve countries. Try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Could not retrieve countries. Try again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
@@ -40,7 +47,7 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun initSuccessfulResponse(response: Response<List<Country>>) {
-        countries = response!!.body()!!
+        countries = response.body()!!
         viewPager = findViewById(R.id.viewPager)
         viewPager.adapter = ViewPagerAdapter(supportFragmentManager, 0, countries)
     }

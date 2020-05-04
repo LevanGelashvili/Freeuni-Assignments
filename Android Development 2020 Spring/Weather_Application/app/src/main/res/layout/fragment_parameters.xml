@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF">
+    android:background="@drawable/rounded_shape">
 
     <ImageView
         android:id="@+id/param_drop"
@@ -57,8 +57,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:textSize="13dp"
         android:text="Precipitation"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="12dp"
         app:layout_constraintEnd_toEndOf="@+id/param_drop"
         app:layout_constraintStart_toStartOf="@+id/param_drop"
         app:layout_constraintTop_toBottomOf="@+id/param_drop" />
@@ -68,6 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="12dp"
         android:text="Humidity"
         app:layout_constraintEnd_toEndOf="@+id/param_three_drops"
@@ -79,8 +81,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:text="Wind speed"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="12dp"
-        android:text="Windspeed"
         app:layout_constraintEnd_toEndOf="@+id/param_flag"
         app:layout_constraintStart_toStartOf="@+id/param_flag"
         app:layout_constraintTop_toBottomOf="@+id/param_flag" />
@@ -90,6 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="12dp"
         android:text="Day and Night"
         app:layout_constraintEnd_toEndOf="@+id/param_sun_moon"
@@ -102,7 +106,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:text="0%"
-        android:textSize="17dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="@+id/param_drop_text"
         app:layout_constraintStart_toStartOf="@+id/param_drop_text"
         app:layout_constraintTop_toBottomOf="@+id/param_drop_text" />
@@ -113,7 +118,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:text="0%"
-        android:textSize="17dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="@+id/param_three_drops_text"
         app:layout_constraintStart_toStartOf="@+id/param_three_drops_text"
         app:layout_constraintTop_toBottomOf="@+id/param_three_drops_text" />
@@ -124,7 +130,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:text="0kmh"
-        android:textSize="17dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="@+id/param_flag_text"
         app:layout_constraintStart_toStartOf="@+id/param_flag_text"
         app:layout_constraintTop_toBottomOf="@+id/param_flag_text" />
@@ -135,7 +142,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:text="0:00am12:00pm"
-        android:textSize="17dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="@+id/param_sun_moon_text"
         app:layout_constraintStart_toStartOf="@+id/param_sun_moon_text"
         app:layout_constraintTop_toBottomOf="@+id/param_sun_moon_text" />

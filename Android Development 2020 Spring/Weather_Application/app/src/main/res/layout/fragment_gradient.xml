@@ -28,14 +28,12 @@
         android:id="@+id/fragment_gradient_country"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
         android:layout_marginTop="30dp"
         android:text="Rome"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/fragment_gradient_date"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 

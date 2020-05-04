@@ -12,4 +12,6 @@
     <color name="day_yellow">#F8E71D</color>
     <color name="night_blue">#395f8c</color>
 
+    <color name="grey_background">#F1F0F0</color>
+
 </resources>
