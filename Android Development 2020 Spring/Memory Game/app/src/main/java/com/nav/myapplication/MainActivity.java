@@ -48,18 +48,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-        if (!canClick || !(v instanceof ImageView) || v.getVisibility() == View.INVISIBLE || v == lastChosenView) return;
+            if (!canClick || !(v instanceof ImageView) || v.getVisibility() == View.INVISIBLE || v == lastChosenView) return;
 
-        textView.setText("Flips : " + (++flipsCount));
-        ((ImageView) v).setImageResource(viewPictures.get(v));
+            textView.setText("Flips : " + (++flipsCount));
+            ((ImageView) v).setImageResource(viewPictures.get(v));
 
-        if (anyCardsOpen) {
-            handleOpenCard(v);
-        } else {
-            lastChosenView = v;
-        }
-        anyCardsOpen = !anyCardsOpen;
-        }
+            if (anyCardsOpen) {
+                handleOpenCard(v);
+            } else {
+                lastChosenView = v;
+            }
+            anyCardsOpen = !anyCardsOpen;
+            }
     };
 
 
