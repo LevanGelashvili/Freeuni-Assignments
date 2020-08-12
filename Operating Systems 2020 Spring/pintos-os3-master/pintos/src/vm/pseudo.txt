@@ -1,0 +1,339 @@
+
+function page_fault():
+
+    bool not_present;  /* True: not-present page, false: writing r/o page. */
+    bool write;        /* True: access was write, false: access was read. */
+    bool user;         /* True: access by user, false: access by kernel. */
+    void *fault_addr;  /* Fault address. */
+
+    if !not_present:
+        free_resourses() // TODO
+        kill()
+
+    process = thread_current()
+    page = fault_addr & -4096 // TODO
+    page_info_ = { process->id, page, process->pagedir }
+
+    page_table.restore_page(page_info_, user)
+
+
+/* Suplemental Page Table */
+
+
+page_table {
+
+    /**
+     * ქმნის ახალ frame-ს,
+     * ავსებს მას შესაბამისი ინფორმაციით და
+     * ყველა მასზე მიმთითებელს "ურეგისტრირებს" page-ად.
+     * ფაქტობრივად აღდგენს მონაცემებს
+     */
+    public static function restore_page(page_info_, user) 
+
+        frame = allocate_frame(user)
+        frame_info_ = frame_info.get_instance(frame) // with no owners
+
+        ASSERT(frame_info_ != NULL && frame_info_->owner_pages->count == 0)
+
+        if owner_pages = swaps_table.fill(frame, page_info_);
+        else {
+            page_info->process.fill(frame, page_info->page);
+            owner_pages = [page_info_]
+        }
+
+        for (int i = 0; i < owner_pages->count; i++):
+            page_info   = owner_pages[i]
+            pagedir     = page_info->pagedir
+            page        = page_info->page
+            writable    = page_info->writable
+
+            frame_info_->add_owner(page_info)
+            pagedir[page] = frame
+    }
+
+    /**
+     * user - თუ user-მა მოითხოვა true,
+     *        თუ kernel-მა - false
+     *
+     * აბრუნებს Non-Null frame-ს, მფლობელების გარეშე.
+     * არაფერს არ წერს frame-ში მხოლოდ
+     * პოულობს პირველ "თავისუფალს" და აბრუნებს მას.
+     * კაცმა არ იცის შიგნით რა შეიძლება დაგხვდეს.
+     */
+    public static function allocate_frame(user) {
+
+        if !frame = palloc_get_page(user | PAL_ZERO): 
+            frame = evict_frame(user)
+            memset(frame, 0, PAGESIZE)
+
+        frame_info.new_instance(frame)
+
+        return frame
+    }
+
+    /**
+     * user - თუ user-მა მოითხოვა true,
+     *        თუ kernel-მა - false
+     *
+     * user პარამეტრის შესაბამისად user_pool-ში ან kernel_pool-ში
+     * ირჩევს frame-ს რომელიც უნდა წაართვას ვინმეს
+     * ცდილობს შეინახოს მისი კონტენტი (თუ ვერ ახერხებს იძახება panic)
+     * აბრუნებს არჩეულ frame-ს
+     */
+    private static function evict_frame(user) {
+
+        if frame = memory_mapped_files.evict():
+           return frame
+
+        *frame = choose_frame_to_evict()
+        *frame_info_ = frame_info.get_instance(frame)
+
+        ASSERT(frame_info_ != NULL)
+
+        if !swaps_table.save(frame_info_, frame):
+            panic()
+
+        return frame
+    }
+
+    /**
+     * აბრუნებს frame-ს თუ
+     * რომელი frame-ია დასა-evict-ებელი frames-ებს შორის
+     * ალგორითმის მიხედვით
+     */
+    private static function choose_frame_to_evict() {
+        // FIXME read-only page არ ამოირჩიო
+        return NULL // TODO: Levan
+    }
+}
+
+
+/* Page Information */
+
+
+page_info {
+
+    process  // struct thread*
+    page     // void*
+    writable // bool
+
+    public function equals(other) {
+        return self.process->id == other.process->id &&
+               self.page == other.page
+    }
+
+    // public function hash_value() {
+    //    return process->id + page / PAGESIZE
+    // }
+}
+
+
+/* Swap Table */
+
+
+frame_info {
+
+    *owner_pages // [ page_info ]
+
+    /**
+     * ამატებს owner_page-ს როგორც ერთერთ მფლობელს
+     */
+    public add_owner(*owner_page) {
+        owner_pages.append(owner_page)
+    }
+
+    // Static Part
+
+    static frame_infos // { *frame : *frame_info }
+
+    /**
+     * ქმნის ახალ frame_info-ს intstance-ს და
+     * "არეგისტრირებს" მას როგორც გადმოცემული frame-ის შესაბამის frame_info-ს
+     */
+    public static new_instance(*frame) {
+
+        frame_info_ = malloc(sizeof frame_info)
+        frame_info_->owner_pages = [ ]
+
+        frame_infos[frame] = frame_info_
+    }
+
+    /**
+     * აბრუნებს
+     * frame-ის შესაბამის frame_info-ს ან
+     * NULL-ს თუ მსგავსი ობიექტი ვერ მოიძებნა
+     */
+    public static get_instance(*frame) {
+        return frame_infos[frame]
+    }
+}
+
+
+swaps_table {
+
+    swaps = [ frame_info ] (SWAP_COUNT)
+
+    /**
+     * SwapDataBase-ში ინახავს frame-ის მონაცემების,
+     * ინახავს მის მფლობელებს და
+     * აბრუნებს true-ს.
+     * თუ ვერ მოახერხა frame-ის მონაცემების შენახვა აბრუნებს false-ს.
+     */
+    public function save(*frame_info, *frame) {
+        for (int i = 0; i < SWAP_COUNT; i++):
+            if swaps[i] == NULL:
+               SwapDataBase[i] = *frame
+               swaps[i] = frame_info
+               return true
+        return false
+    }
+
+    /**
+     * ეძებს page_info_-სთან დაკავშივრებულ მონაცემების
+     *
+     * თუ იპოვის:
+     *     frame მისამართზე წერს შესაბამის მონაცემებს და
+     *     აბრუნებს მონაცემების მთლობელი page_info-ების სიას.
+     *
+     * თუ ვერ იპოვის:
+     *     აბრუნებს NULL-ს.
+     */
+    public function fill(*frame, page_info_) {
+        for (int i = 0; i < SWAP_COUNT; i++):
+            owner_pages = swaps[i]->owner_pages
+            for (int j = 0; j < owner_pages.count; j++):
+                if owner_pages[j].equals(page_info_):
+                   *frame = SwapDataBase[i]
+                   swaps[i] = NULL
+                   return owner_pages
+        return NULL
+    }
+}
+
+/* Free Resourses */
+
+free_resourses (process) {
+
+    for each page_info in process.pageinfodir:
+        free_resourse(page_info)
+}
+
+free_resourse (page_info) {
+
+    frame_info = page_info->owned_frame
+
+    // Free Page
+    owner_pages.remove(page_info) // list_remove(page_info->elem)
+    // TODO: Remove From MMF
+    free(page_info)
+
+    if len(frame_info->owner_pages) == 0:
+        // Free Frame Info
+        frame_infos_map.remove(frame_info) // list_remove(frame_info->elem)
+        swap_table.swaps.remove(frame_info) // for each ... if == : swaps[i] = NULL
+        ASSERT(uechveli ertidan waishala)
+        void *frame = frame_info->frame
+        free(frame_info)
+        palloc_free_page(frame)
+}
+
+/* Memory Mapped Files */
+
+syscall_handler {
+    ...
+
+    case SYS_MMAP:;
+        prepare args
+        process = thread_current()
+        process.mmap_handler(fd, addr)
+
+    case SYS_MUNMAP:;
+        prepare args
+        process = thread_current()
+        process.munmap_handler(mapid)
+
+    ...
+}
+
+/* Per Process */
+memory_mapped_files {
+
+    mmfs = [ (page_info, fd) ] // [ (starting_page, fd) ]
+
+    /**
+     *
+     */
+    public function mmap_handler(int fd, void *addr) {
+
+        if invalid(): // TODO
+           return -1
+
+        copy_fd = file_reopen(fd)
+        if cant reopen:
+           return -1
+
+        new_start_page  = addr
+        new_finish_page = compute_finish_page(new_start_page, copy_fd)
+
+        for start_page, fd in mmfs:
+            finish_page = compute_finish_page(start_page, fd)
+
+            if [new_start_page, new_finish_page] overlaps with [start_page, finish_page]:
+                return -1
+
+        mmfs.append( (new_start_page, copy_fd) )
+
+        return new_start_page // mapid_t
+    }
+
+    /**
+     *
+     */
+    private function compute_finish_page(start_page, fd) {
+        return (start_page + file_size(fd)) & -4096
+    }
+
+    /**
+     *
+     */
+    public function munmap_handler(mapid_t mapid) {
+
+        for start_page, fd in mmfs:
+            if start_page == mapid:
+               mmfs.remove(start_page)
+               // TODO: Save segments which are in RAM
+
+               // i i i <- ram
+               // iiiii <- file
+
+               close(fd)
+               remove pages from pagedir if exists
+    }
+
+    /**
+     * ეძებს page-თან დაკავშივრებულ file-ს
+     *
+     * თუ იპოვის:
+     *     frame მისამართზე წერს file-ის შესაბამის მონაკვეთს
+     *
+     * თუ ვერ იპოვის:
+     *     არაფერს არ აკეთებს
+     */
+    public function fill(*frame, page) {
+
+        for start_page, fd in mmfs:
+            finish_page = compute_finish_page(start_page, fd)
+
+            if page in [start_page, finish_page]:
+
+                start  = page - start_page
+                finish = start + PAGESIZE
+                *frame = fd[start : finish]
+
+                return
+    }
+
+    public static function evict() {
+        // TODO: Returns *frame
+    }
+}
